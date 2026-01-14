@@ -1,0 +1,38 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    networks:
+      - devops-network
+    environment:
+      - NODE_ENV=development
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "83:80"
+    networks:
+      - devops-network
+    depends_on:
+      - backend
+
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    networks:
+      - devops-network
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
+
+networks:
+  devops-network:
+    driver: bridge
+    name: devops-network  # Custom name instead of auto-generated
